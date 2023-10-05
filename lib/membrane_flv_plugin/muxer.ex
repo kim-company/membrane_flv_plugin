@@ -82,13 +82,6 @@ defmodule Membrane.FLV.Muxer do
     dts = get_timestamp(buffer.dts || buffer.pts)
     pts = get_timestamp(buffer.pts) || dts
 
-    {dts, pts, state} =
-      case state.init_dts[pad] do
-        # FLV requires DTS to start from 0
-        nil -> {0, pts - dts, put_in(state, [:init_dts, pad], dts)}
-        init_dts -> {dts - init_dts, pts - init_dts, state}
-      end
-
     state = put_in(state, [:last_dts, pad], dts)
 
     {actions, state} =
